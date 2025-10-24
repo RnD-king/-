@@ -1,7 +1,8 @@
+
 #pragma once
 #include <eigen3/Eigen/Dense>
 #include <iostream>
-#include <cmath>
+#include <span>
 #include "BRP_Kinematics.hpp"
 using namespace Eigen;
 using namespace std;
@@ -95,26 +96,80 @@ public:
 	MatrixXd LF_xsimulation_straightwalk();
 	MatrixXd RF_zsimulation_straightwalk(double h);
 	MatrixXd LF_zsimulation_straightwalk(double h);
+	MatrixXd YComSimulation_Sidewalk_half(double a, double b, double c, double d);
 
 	void Go_Straight(double step, double distance, double height);
 	void Go_Straight_start(double step, double distance, double height);
 	void Go_Back_Straight(double step, double distance, double height);
+	void Go_Back_Straight2(double step, double distance, double height);
 	void Go_Back(double step, double distance, double height);
 	void Freq_Change_Straight(double step, double distance, double height, double freq);
 	void Stop_Trajectory_straightwalk(double step);
-
-
+	void Step_in_place(double step, double distance, double height);
+	void Side_Left1(double step);
+	void Side_Right1(double step);
+	void Picking_Motion(int FB_sim_n, int M_sim_n, double COM_h);
+	
+	
+	
+	
+	MatrixXd RF_ysimulation_leftwalk_halfstep();
+	MatrixXd LF_ysimulation_leftwalk_halfstep();
+	MatrixXd RF_zsimulation_leftwalk_halfstep();
+	MatrixXd LF_zsimulation_leftwalk_halfstep();
+	MatrixXd RF_ysimulation_rightwalk_halfstep();
+	MatrixXd LF_ysimulation_rightwalk_halfstep();
+	MatrixXd RF_zsimulation_rightwalk_halfstep();
+	MatrixXd LF_zsimulation_rightwalk_halfstep();
+	
+	
+	
+	
+	void Huddle_Motion(double step, double height, double COM_h);
+	MatrixXd RF_xsimulation_huddle();
+	MatrixXd LF_xsimulation_huddle();
+	MatrixXd RF_zsimulation_huddle(double h, double COM_h);
+	MatrixXd LF_zsimulation_huddle(double h, double COM_h);
+	MatrixXd Huddle_Xcom();
+	MatrixXd Huddle_Ycom();
 	MatrixXd RF_zsimulation_sitdown(double h);
 	MatrixXd LF_zsimulation_sitdown(double h);
 	MatrixXd RF_zsimulation_standup(double h);
 	MatrixXd LF_zsimulation_standup(double h);
+
+	MatrixXd Foot_zsimulation_sitdown(double h);
+	MatrixXd Foot_zsimulation_standup(double h);
+
+
+
+	void Side_Left2();
+	MatrixXd YComSimulation_Sidewalk(double a, double b, double c, double d, double e, double f);
+	MatrixXd RF_ysimulation_leftwalk();
+	MatrixXd LF_ysimulation_leftwalk();
+	MatrixXd RF_zsimulation_leftwalk();
+	MatrixXd LF_zsimulation_leftwalk();
+
+
+
 	MatrixXd z_position_sitdown(int M_sim_n, double h);
 	MatrixXd zsimulation_sitdown_pick(int FB_sim_n, double h);
 	MatrixXd zsimulation_standup_pick(int FB_sim_n, double h);
 
+	void Make_turn_trajectory(double angle);
+	double Return_turn_trajectory(double t);
+	double Return_back_trajectory(double t);
 
-	void Picking_Motion(int FB_sim_n, int M_sim_n, double COM_h);
 
+
+
+
+	MatrixXd RF_zsimulation_sitdown3(double h);
+	MatrixXd LF_zsimulation_sitdown3(double h);
+
+
+
+
+	MatrixXd zsimulation_standup_Shoot_FINISH(int FB_sim_n, double h);
 
 	MatrixXd Ref_RL_x;
 	MatrixXd Ref_RL_y;
@@ -143,8 +198,54 @@ public:
 	MatrixXd RF_yFoot;
 	MatrixXd LF_yFoot;
 
+
 	VectorXd Turn_Trajectory;
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class IK_Function
 {
@@ -167,6 +268,14 @@ private:
 	double L5 = 36.10;
 	double L6 = 42.58;
 
+
+	// double L0 = 60;
+	// double L1 = 0;
+	// double L2 = 0;
+	// double L3 = 250;
+	// double L4 = 250;
+	// double L5 = 318;
+	// double L6 = 77;
 
 
 
@@ -228,15 +337,67 @@ public:
     void BRP_Simulation(const MatrixXd& RFx, const MatrixXd& RFy, const MatrixXd& RFz, const MatrixXd& LFx, const MatrixXd& LFy, const MatrixXd& LFz, int Index_CNT);
 	void Angle_Compensation(int indext, int size);
 	void Fast_Angle_Compensation(int indext);
+	void Forward_40step_Angle_Compensation(int indext);
 	void Angle_Compensation_test(int indext);
 	void Set_Angle_Compensation(int walktime_n);
+	void Angle_Compensation_Huddle(int indext);
+
+
+
+
+
+
+
+
+
+
 	void Change_Angle_Compensation(double RL_Support, double RL_Swing, double RL_Knee , double RL_Ankle, double LL_Support, double LL_Swing, double LL_Knee ,double LL_Ankle);
 	double RL_th[6] = { 0.,0.,-0.610865,1.22173,0.610865,0. }, LL_th[6] = { 0.,0.,-0.610865,1.22173,0.610865, 0.};
 	void Change_Com_Height(double h);
     
 	double check_index;
 
+
+
+
+
+	void Angle_Compensation_Leftwalk(int indext);
+	void Angle_Compensation_Rightwalk(int indext);
+
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -258,11 +419,15 @@ public:
     void RA_Trajectory(double RA_th1, double RA_th2, double RA_th3, double RA_th4, int length);
     void LA_Trajectory(double LA_th1, double LA_th2, double LA_th3, double LA_th4, int length);
     void NC_Trajectory(double NC_th1, double NC_th2, int length);
+	void RL_Trajectory(double th1, double th2, double th3, double th4, double th5, double th6, int length);
+	void LL_Trajectory(double th1, double th2, double th3, double th4, double th5, double th6, int length);
 
     void UPBD_SET(const MatrixXd& WT, const MatrixXd& RA, const MatrixXd& LA, const MatrixXd& NC, int Index_CNT);
+	void UPBD_SET_ALL(const MatrixXd& WT, const MatrixXd& RA, const MatrixXd& LA,const MatrixXd& NC, const MatrixXd& RL, const MatrixXd& LL,int Index_CNT);
     void Fast_Arm_Swing(int indext, int walktime_n, double sim_n);
 
     void Picking(const MatrixXd& RFx, int Index_CNT, double& RL, double& LL);
+	void Stand_up(const MatrixXd& RFx, int Index_CNT);
     void Huddle(const MatrixXd& RFx, int Index_CNT,double& RL, double& LL, double& RL_2, double& LL_2,double& HS, double& SR);
 
     // Public arrays
@@ -270,9 +435,14 @@ public:
     double RA_th[4];
     double LA_th[4];
     double NC_th[2];
+	double RL_th_ALL[6] = {0};
+    double LL_th_ALL[6] = {0};
 
 	MatrixXd Ref_WT_th;
     MatrixXd Ref_RA_th;
     MatrixXd Ref_LA_th;
     MatrixXd Ref_NC_th;
+	MatrixXd Ref_RL_th;
+	MatrixXd Ref_LL_th;
+
 };

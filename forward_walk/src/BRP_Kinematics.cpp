@@ -98,7 +98,7 @@ void BRP_RL_IK(const VectorXd& target_PR, const VectorXd& init_theta, const Vect
 
         // Joint Angle Update
         for (k = 0; k < dof; ++k){
-        	double sum = 0;
+            double sum = 0.0;
             for (j = 0; j < dof; ++j)
                 sum += Inv_J(k, j) * F(j);
             th(k) = old_Q(k) + sum;
@@ -196,7 +196,7 @@ void BRP_LL_IK(const VectorXd& target_PR, const VectorXd& init_theta, const Vect
 
         // Joint Angle Update
         for (k = 0; k < dof; ++k){
-        	double sum = 0;
+            double sum = 0.0;
             for (j = 0; j < dof; ++j)
                 sum += Inv_J(k, j) * F(j);
             th(k) = old_Q(k) + sum;

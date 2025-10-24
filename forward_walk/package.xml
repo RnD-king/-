@@ -13,7 +13,10 @@
   <depend>std_msgs</depend>
   <depend>dynamixel_sdk</depend>
   <depend>tf2</depend>
-  <depend>eigen3</depend> 
+  <depend>eigen3</depend>
+  <depend>robot_msgs</depend>
+  <depend>sensor_msgs</depend>
+ 
   
   <export>
     <build_type>ament_cmake</build_type>

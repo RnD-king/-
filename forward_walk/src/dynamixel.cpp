@@ -1,13 +1,46 @@
 #include "dynamixel.hpp"
-#include <iostream>  // 추가
+#include <iostream>  
+
+const char* getAvailableDeviceName()
+{
+    std::vector<const char*> candidates = {"/dev/ttyUSB0", "/dev/ttyUSB1", "/dev/ttyUSB2"};
+    for (auto dev : candidates) {
+        auto portHandler = dynamixel::PortHandler::getPortHandler(dev);
+        if (portHandler->openPort()) {
+            portHandler->setBaudRate(BAUDRATE);
+            auto packetHandler = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION);
+
+            uint16_t model_number;
+            uint8_t dxl_error = 0;
+            int dxl_comm_result = packetHandler->ping(portHandler, 1, &model_number, &dxl_error);
+            // ⚠️ 여기서 1은 네 다이나믹셀 ID. 네 환경에 맞게 바꿔줘야 함.
+
+            if (dxl_comm_result == COMM_SUCCESS) {
+                std::cout << "[Info] Dynamixel found on " << dev << std::endl;
+                portHandler->closePort(); // 다시 열기 위해 닫아줌
+                return dev;
+            } else {
+                portHandler->closePort();
+            }
+        }
+    }
+    std::cerr << "[Error] No valid Dynamixel port found" << std::endl;
+    exit(1);
+}
+
 
 Dxl::Dxl()
 {
     uint8_t dxl_error = 0;
     int dxl_comm_result = COMM_TX_FAIL;
 
-    portHandler = dynamixel::PortHandler::getPortHandler(DEVICE_NAME);
+
+    const char* device_name = getAvailableDeviceName();   // ✅ 자동 선택
+    portHandler = dynamixel::PortHandler::getPortHandler(device_name);
     packetHandler = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION);
+
+    // portHandler = dynamixel::PortHandler::getPortHandler(DEVICE_NAME);
+    // packetHandler = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION);
 
     if (!portHandler->openPort())
         std::cerr << "[Error] Failed to open the port!" << std::endl;
@@ -48,6 +81,9 @@ Dxl::Dxl()
         std::cerr << "[Error] Invalid mode set." << std::endl;
     }
 
+
+
+
     for (uint8_t i = 0; i < NUMBER_OF_DYNAMIXELS; i++)
     {
         dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, dxl_id[i], DxlReg_TorqueEnable, 1, &dxl_error);
@@ -57,6 +93,7 @@ Dxl::Dxl()
             std::cout << "[Info] Torque enabled for ID: " << int(dxl_id[i]) << std::endl;
     }
 
+
     for (uint8_t i = 0; i < NUMBER_OF_DYNAMIXELS; i++)
     {
         dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, dxl_id[i], DxlReg_LED, 1, &dxl_error);
@@ -65,6 +102,17 @@ Dxl::Dxl()
         else
             std::cout << "[Info] LED enabled for ID: " << int(dxl_id[i]) << std::endl;
     }
+
+
+
+
+    // VectorXd theta_zero = VectorXd::Zero(NUMBER_OF_DYNAMIXELS);
+    // MoveToTargetSmoothCos(theta_zero, 150, 10);
+
+    // VectorXd theta_goal = Eigen::Map<VectorXd>(Set_D, NUMBER_OF_DYNAMIXELS);
+    // MoveToTargetSmoothCos(theta_goal, 150, 10);
+    // std::cout << "[Info] Start is half!!!!!!" << std::endl;
+
 
     VectorXd PID_Gain(3);
     PID_Gain << 850, 0, 0;
@@ -218,6 +266,9 @@ void Dxl::syncWriteTheta()
   gSyncWriteTh.clearParam();
 }
 
+
+
+
 //Setter() : 목표 세타값 설정 [rad]
 void Dxl::SetThetaRef(VectorXd theta)
 {
@@ -366,3 +417,43 @@ void Dxl::initActuatorValues()
 }
 
 
+
+
+
+
+
+
+
+
+// portHandler, dxl_id[i], DxlReg_PositionDGain, D_gain, &dxl_error
+
+
+VectorXd Dxl::read_rad()
+{
+    VectorXd rdl_(NUMBER_OF_DYNAMIXELS);
+    int32_t present_position = 0;
+    for (int i =0; i< NUMBER_OF_DYNAMIXELS; i++)
+    {
+        packetHandler->read4ByteTxRx(portHandler, dxl_id[i], DxlReg_PresentPosition,(uint32_t*)&present_position);
+        rdl_[i] = (present_position - 2048) * (2.0 * M_PI / 4096.0);
+    }
+
+    return rdl_;
+}
+
+void Dxl::MoveToTargetSmoothCos(const VectorXd& theta_goal, int steps, int delay_ms)
+{
+    VectorXd theta_now = read_rad();
+
+    for (int s = 1; s <= steps; ++s)
+    {
+        double rate = 0.5 * (1 - cos(M_PI * double(s) / steps));
+        VectorXd theta_interp = theta_now + (theta_goal - theta_now) * rate;
+        SetThetaRef(theta_interp);
+        syncWriteTheta();
+        std::this_thread::sleep_for(std::chrono::milliseconds(delay_ms));
+    }
+    SetThetaRef(theta_goal);
+    syncWriteTheta();
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+}
