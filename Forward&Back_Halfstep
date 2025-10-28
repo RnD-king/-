@@ -1,0 +1,30 @@
+        else if(set_mode == Motion_Index::Forward_Halfstep)    //Forward_Halfstep
+        {
+            re = 1;
+            indext = 0;
+
+            trajectoryPtr->Change_Freq(2);
+            IK_Ptr->Change_Com_Height(30);
+            // trajectoryPtr->Go_Straight(0.02, 0.12, 0.03);    // basic
+            trajectoryPtr->Go_Straight(0.01, 0.08, 0.03);   // closed
+
+            IK_Ptr->Get_Step_n(trajectoryPtr->Return_Step_n());
+            // IK_Ptr->Change_Angle_Compensation(3, 4, 2, 2, 2, 2, 2, -2); 
+            IK_Ptr->Change_Angle_Compensation(1, 1, 0, -1, 1, 1, 0, -3);    // RL, LL plus outside
+            IK_Ptr->Set_Angle_Compensation(135);
+        }
+
+
+
+        else if (set_mode == Motion_Index::Back_Halfstep)    // Back_Halfstep = 5,
+        {
+            re = 1;
+            indext = 0;
+            trajectoryPtr->Change_Freq(2);
+            // mode = Motion_Index::Back_Halfstep;
+            IK_Ptr->Change_Com_Height(30);
+            trajectoryPtr->Go_Back_Straight(-0.04, -0.1, 0.05);
+            IK_Ptr->Change_Angle_Compensation(2.5, 3, 0, 0, 5, 6, 1.5, -4);
+            IK_Ptr->Get_Step_n(trajectoryPtr->Return_Step_n());
+            IK_Ptr->Set_Angle_Compensation(135);
+        }  
