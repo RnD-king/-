@@ -1,0 +1,38 @@
+void IK_Function::Change_Angle_Compensation2(double RL_Support, double RL_Swing, double RL_Knee, double RL_Ankle, double RL_Ankle2, double LL_Support, double LL_Swing, double LL_Knee, double LL_Ankle, double LL_Ankle2)
+{
+	RL_Support_Leg = RL_Support * deg2rad;
+	RL_Swing_Leg = RL_Swing * deg2rad;
+	RL_Support_Knee = RL_Knee * deg2rad; 
+	RL_Support_Ankle = RL_Ankle * deg2rad;
+	RL_Swing_Ankle = RL_Ankle2 * deg2rad;
+
+	LL_Support_Leg = LL_Support * deg2rad;
+	LL_Swing_Leg = LL_Swing * deg2rad;
+	LL_Support_Knee = LL_Knee * deg2rad; 
+	LL_Support_Ankle = LL_Ankle * deg2rad;
+	LL_Swing_Ankle = LL_Ankle2 * deg2rad;
+}  // Insert in Newpattern.cpp
+
+
+double IK_Function::RL_Swing_Ankle_Compensation_up(double t)	//	Jinsoo plus
+{
+	double X = RL_Compensation_Swing_ankle_up(0) + RL_Compensation_Swing_ankle_up(1) * t + RL_Compensation_Swing_ankle_up(2) * pow(t, 2) + RL_Compensation_Swing_ankle_up(3) * pow(t, 3) + RL_Compensation_Swing_ankle_up(4) * pow(t, 4) + RL_Compensation_Swing_ankle_up(5) * pow(t, 5);
+	return X;
+};
+double IK_Function::RL_Swing_Ankle_Compensation_down(double t)	// Jinsoo plus
+{
+	double X = RL_Compensation_Swing_ankle_down(0) + RL_Compensation_Swing_ankle_down(1) * t + RL_Compensation_Swing_ankle_down(2) * pow(t, 2) + RL_Compensation_Swing_ankle_down(3) * pow(t, 3) + RL_Compensation_Swing_ankle_down(4) * pow(t, 4) + RL_Compensation_Swing_ankle_down(5) * pow(t, 5);
+	return X;
+}; 
+double IK_Function::LL_Swing_Ankle_Compensation_up(double t)	// Jinsoo plus
+{
+	double X = LL_Compensation_Swing_ankle_up(0) + LL_Compensation_Swing_ankle_up(1) * t + LL_Compensation_Swing_ankle_up(2) * pow(t, 2) + LL_Compensation_Swing_ankle_up(3) * pow(t, 3) + LL_Compensation_Swing_ankle_up(4) * pow(t, 4) + LL_Compensation_Swing_ankle_up(5) * pow(t, 5);
+	return X;
+};
+double IK_Function::LL_Swing_Ankle_Compensation_down(double t)	// Jinsoo plus
+{
+	double X = LL_Compensation_Swing_ankle_down(0) + LL_Compensation_Swing_ankle_down(1) * t + LL_Compensation_Swing_ankle_down(2) * pow(t, 2) + LL_Compensation_Swing_ankle_down(3) * pow(t, 3) + LL_Compensation_Swing_ankle_down(4) * pow(t, 4) + LL_Compensation_Swing_ankle_down(5) * pow(t, 5);
+	return X;
+};  // Insert in Newpattern.cpp
+
+///// You must insert definition in Newpattern2.cpp /////////
